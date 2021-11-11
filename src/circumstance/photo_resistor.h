@@ -11,10 +11,10 @@ class PhotoResistor
 
   public:
   PhotoResistor(uint8_t pin) {
-	analogPinNum = pin;
+	analogPinNum  = pin;
 	pinMode(analogPinNum, INPUT);
   }
-  
+    
   float getLux() {
     float RawADC0 = analogRead(analogPinNum);
    double Vout=RawADC0*0.0048828125;
