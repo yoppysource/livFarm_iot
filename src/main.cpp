@@ -12,23 +12,33 @@
 #include <Arduino.h>
 #include <SimpleTimer.h>
 
+
+#include <BH1750.h>
+
+/*
+  BH1750 can be physically configured to use two I2C addresses:
+    - 0x23 (most common) (if ADD pin had < 0.7VCC voltage)
+    - 0x5C (if ADD pin had > 0.7VCC voltage)
+
+  Library uses 0x23 address as default, but you can define any other address.
+  If you had troubles with default value - try to change it to 0x5C.
+
+*/
+BH1750 lightMeter(0x23);
+
 // Define pins for sensors
 #define WATER_LEVEL_HIGH_PIN 12
 #define WATER_LEVEL_LOW_PIN 13
-#define NUTRIENT_RELAY_PIN 7 //ch3
-#define SOLENOID_RELAY_PIN 8 //ch2
+#define NUTRIENT_RELAY_PIN 8 
+#define SOLENOID_RELAY_PIN 7 
 #define LED_RELAY_PIN 9 // ch3
-
-// Define boundary for EC
-#define EC_LOW_BOUNDARY 2.4
-#define EC_HIGH_BOUNDARY 2.8
 
 // Define error num
 #define SOLENOID_VALVE_ERROR_NUM 240
 
 // Create instance from the sensor classes
 LiquidCrystal_I2C lcd(0x27,20,4); //
-PhotoResistor photoResistor(A4);
+PhotoResistor photoResistor();
 Co2Sensor co2Sensor; //Tx: 2, Rx: 3
 TempHumditySensor tempHumditySensor; //6 
 WaterTemperatureSensor waterTemperatureSensor; // D6
@@ -44,7 +54,9 @@ Nutrient nutrient(NUTRIENT_RELAY_PIN);
 SimpleTimer timer;
 int timerId;
 // 20 min set for calling function 
-const int intervalForEcFunction =  1200000;
+const long intervalForEcFunction =  1200000;
+
+
 #define EC_LOW_BOUNDARY 1.8
 #define EC_HIGH_BOUNDARY 2.2
 #define EC_STANDARD 2.0
@@ -52,28 +64,8 @@ const int intervalForEcFunction =  1200000;
 // This aim for count 
 unsigned int waterCnt;
 
-void setup() {
-  Serial.begin(9600);
-  solenoidValve.close();
-  lcd.init();         
-  lcd.backlight();
-  lcd.setCursor(0,0);
-  lcd.print("Setting Arduino");
-  tempHumditySensor.checkSensor();
-  //TODO: in production mode, it should take a while for hitting co2 sensor up 
-  co2Sensor.begin();// Rx for 3, Tx for 2
-  eCSensor.begin();
-  
-  //initialize water count
-  waterCnt = 0;
-  lcd.setCursor(0,0);
-  lcd.print("Setting Done!");
-  lcd.clear();
-  // set interval for controlling ec
-  timerId = timer.setInterval(intervalForEcFunction, controlEc);
-}
-
 void controlEc() {
+  Serial.println("controlEC!");
   float ecValue = eCSensor.getEC();
   float difference;
   if(ecValue < EC_LOW_BOUNDARY && waterLevelSensor.getWaterLevel() != WATER_LEVEL_LOW){
@@ -98,9 +90,33 @@ void controlEc() {
       solenoidValve.close();
     }
   } else {
-    Serial.println("IS Between Boundary or Something WRONG!!");
+    Serial.println("EC Between Boundary or Something WRONG!!");
   }
 }
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  lightMeter.begin();
+  lcd.init();         
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("Setting Arduino");
+  tempHumditySensor.checkSensor();
+  //TODO: in production mode, it should take a while for hitting co2 sensor up 
+  co2Sensor.begin();// Rx for 3, Tx for 2
+  eCSensor.begin();
+  
+  //initialize water count
+  waterCnt = 0;
+  lcd.setCursor(0,0);
+  lcd.print("Setting Done!");
+  lcd.clear();
+
+  // set interval for controlling ec
+  timerId = timer.setInterval(intervalForEcFunction, controlEc);
+}
+
 
 
 bool controlWater(WaterLevel waterInput){
@@ -137,9 +153,10 @@ void loop() {
   /*
   //   This step aim for measuring circumstance 
   */
+
   float currentTemp  = tempHumditySensor.getTemperature();
   float currentRelativeHumidity  = tempHumditySensor.getRelativeHumidity();
-  float currentLux = (photoResistor.getLux(),2);
+  float currentLux = lightMeter.readLightLevel();
   float currentPPM = co2Sensor.getPPM();
 
 
