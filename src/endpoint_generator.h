@@ -13,7 +13,7 @@ class EndpointGenerator
   public:
   
   String getInitPath() {
-    return INIT_PATH + SECRET_PLANTER_ID;
+    return String("/planters/") + SECRET_PLANTER_ID;
   }
   String getSnapshotsPath() {
     return SNAPSHOTS_PATH;

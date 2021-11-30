@@ -33,19 +33,19 @@ class WaterLevelSensor
   }
   }
 
-  String printWaterLevel(WaterLevel waterLevel) {
+  // String printWaterLevel(WaterLevel waterLevel) {
 
-    switch (waterLevel)
-    {
-    case WATER_LEVEL_HIGH:         
-     return "High";
-    case WATER_LEVEL_LOW:
-     return " Low";
-    case WATER_LEVEL_ENOUGH:   
-     return "Good";
-    default:
-        " ERR";
-    }
+  //   switch (waterLevel)
+  //   {
+  //   case WATER_LEVEL_HIGH:         
+  //    return "High";
+  //   case WATER_LEVEL_LOW:
+  //    return " Low";
+  //   case WATER_LEVEL_ENOUGH:   
+  //    return "Good";
+  //   default:
+  //       " ERR";
+  //   }
 
-  }
+  // }
 };

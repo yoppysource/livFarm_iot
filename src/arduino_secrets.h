@@ -10,15 +10,15 @@ For example,
 */
 #define SECRET_PLANTER_ID "sgf13"
 #define SECREP_PLANTER_NUMBER 13
-#define SECRET_PUBLIC_IP "12.123.12.3"
+#define SECRET_PUBLIC_IP "59.10.187.220"
 // #define SECREP_LOCAL_IP "2.3.2.1"
-#define SECRET_PUBLIC_PORT 101
+#define SECRET_PUBLIC_PORT 251
 
 #define SECRET_SSID "segokFarm"
 #define SECRET_PASSWORD "alwaysgreen12"
 #define SECRET_HTTP_PORT 80
 
 #define SECRET_CLOUD_ADDRESS "8f21-59-10-187-220.ngrok.io" // hostname of web server:
-#define SECRET_CAMERA_IP "10.12.12.12"
+#define SECRET_CAMERA_IP "172.30.1.4"
 #define SECRET_PATH_ROOT  "/"
 #define SECRET_PATH_INIT  "/planters/init/"
